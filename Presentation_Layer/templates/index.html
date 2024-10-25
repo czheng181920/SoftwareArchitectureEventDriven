@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar Management Web App</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+  </head>
+  <body>
+    <!-- <div id="datastuff">
+      <h1>Enter Data</h1>
+      <form id="data-form">
+        <label for="info">Data:</label>
+        <input type="text" id="info" name="info" />
+        <button type="submit">Submit</button>
+      </form>
+    </div> -->
+
+    <div id="meetingTitle">
+      <h1>Calendar App</h1>
+      <form id="optionForm">
+        <label for="choice">Select an option to manage:</label>
+        <select id="choice" name="choice" onchange="handleOptionChange()">
+          <option value="0">Select...</option>
+          <option value="1">Meetings</option>
+          <option value="2">Calendars</option>
+          <option value="3">Participants</option>
+          <option value="4">Attachments</option>
+        </select>
+      </form>
+    </div>
+
+    <!-- Meeting management form -->
+    <div id="meetingForm" style="display:none">
+      <h2>Manage Meetings</h2>
+      <form id="meeting-manage-form">
+        <label for="meeting-option">Select an option:</label>
+        <select id="meeting-option" name="meeting-option" onchange="handleMeetingOptionChange()">
+          <option value="0">Select...</option>
+          <option value="1">Create Meeting</option>
+          <option value="2">Query All Meetings</option>
+          <option value="3">Query Meeting by ID</option>
+          <option value="4">Update Meeting</option>
+          <option value="5">Delete Meeting</option>
+          <option value="6">List of Calendars for a Meeting</option>
+          <option value="7">List of Participants for a Meeting</option>
+          <option value="8">List of Attachments for a Meeting</option>
+        </select>
+
+        <!-- This section will appear dynamically when the user selects an option -->
+        <div id="meeting-id-section" style="display:none; margin-top: 10px;">
+          <label for="meeting-id">Enter Meeting ID:</label>
+          <input type="text" id="meeting-id" name="meeting-id" placeholder="Enter Meeting ID">
+          
+        </div>
+
+        <div id="meeting-title-section" style="display:none; margin-top: 10px;">
+          <label for="meeting-title">Enter Meeting Title:</label>
+          <input type="text" id="meeting-title" name="meeting-title" placeholder="Enter Meeting Title">
+         
+        </div>
+
+        <div id="meeting-date-section" style="display:none; margin-top: 10px;">
+          <label for="meeting-date">Enter Meeting Date:</label>
+          <input type="datetime-local" id="meeting-date" name="meeting-date" placeholder="Enter Meeting Date">
+          
+        </div>
+
+        <div id="meeting-location-section" style="display:none; margin-top: 10px;">
+          <label for="meeting-location">Enter Meeting Location:</label>
+          <input type="text" id="meeting-location" name="meeting-location" placeholder="Enter Meeting Location">
+          
+        </div>
+
+        <div id="meeting-details-section" style="display:none; margin-top: 10px;">
+          <label for="meeting-details">Enter Meeting Details:</label>
+          <input type="text" id="meeting-details" name="meeting-details" placeholder="Enter Meeting Details">
+          
+        </div>
+      </form>
+
+      <div id="meeting-submit-section" style="display:none; margin-top: 10px;"></div>
+        <button id="submitButton" type="submit">Submit</button>
+       </div>
+
+       <ul id="meetingsList"></ul>
+
+    </div>
+
+    <!-- Calendar management form -->
+    <div id="calendarForm" style="display:none">
+      <h2>Manage Calendars</h2>
+      <form id="calendar-manage-form">
+        <label for="calendar-option">Select an option:</label>
+        <select id="calendar-option" name="calendar-option" onchange="handleCalendarOptionChange()">
+          <option value="0">Select...</option>
+          <option value="1">Create Calendar</option>
+          <option value="2">Query All Calendars</option>
+          <option value="3">Query Calendar by ID</option>
+          <option value="4">Update Calendar</option>
+          <option value="5">Delete Calendar</option>
+          <option value="6">List of Meetings for a Calendar</option>
+          <option value="7">Add Meeting to a Calendar</option>
+        </select>
+
+        <!-- This section will appear dynamically when the user selects an option -->
+        <div id="calendar-id-section" style="display:none; margin-top: 10px;">
+          <label for="calendar-id">Enter Calendar ID:</label>
+          <input type="text" id="calendar-id" name="calendar-id" placeholder="Enter Calendar ID">
+          
+        </div>
+
+        <div id="calendar-title-section" style="display:none; margin-top: 10px;">
+          <label for="calendar-title">Enter Calendar Title:</label>
+          <input type="text" id="calendar-title" name="calendar-title" placeholder="Enter Calendar Title">
+          
+        </div>
+
+        <div id="calendar-details-section" style="display:none; margin-top: 10px;">
+          <label for="calendar-details">Enter Calendar Details:</label>
+          <input type="text" id="calendar-details" name="calendar-details" placeholder="Enter Calendar Details">
+          
+        </div>
+
+        <div id="meeting-id-section" style="display:none; margin-top: 10px;">
+          <label for="meeting-id">Enter Meeting ID:</label>
+          <input type="text" id="meeting-id" name="meeting-id" placeholder="Enter Meeting ID">
+        </div>
+        
+      </form>
+
+       <div id="calendar-submit-section" style="display:none; margin-top: 10px;">
+        <button id="calendarSubmitButton" type="submit">Submit</button>
+    </div>
+    
+
+       <ul id="calendarList"></ul>
+    </div>
+
+    <!-- Participant management form -->
+    <div id="participantsForm" style="display:none">
+      <h2>Manage Participants</h2>
+      <form id="participant-manage-form">
+        <label for="participant-option">Select an option:</label>
+        <select id="participant-option" name="participant-option" onchange="handleParticipantOptionChange()">
+          <option value="0">Select...</option>
+          <option value="1">Create Participant</option>
+          <option value="2">Query All Participants</option>
+          <option value="3">Query Participant by ID</option>
+          <option value="4">Update Participant</option>
+          <option value="5">Delete Participant</option>
+        </select>
+
+        <!-- This section will appear dynamically when the user selects an option -->
+        <div id="participant-id-section" style="display:none; margin-top: 10px;">
+          <label for="participant-id">Enter Participant ID:</label>
+          <input type="text" id="participant-id" name="participant-id" placeholder="Enter Participant ID">
+        </div>
+
+        <div id="meeting-id-section-participant" style="display:none; margin-top: 10px;">
+          <label for="meeting-id">Enter Meeting ID:</label>
+          <input type="text" id="meeting-id-participant" name="meeting-id" placeholder="Enter Meeting ID">
+        </div>
+
+        <div id="participant-name-section" style="display:none; margin-top: 10px;">
+          <label for="participant-name">Enter Participant Name:</label>
+          <input type="text" id="participant-name" name="participant-name" placeholder="Enter Participant Name">
+        </div>
+
+        <div id="participant-email-section" style="display:none; margin-top: 10px;">
+          <label for="participant-email">Enter Participant Email:</label>
+          <input type="text" id="participant-email" name="participant-email" placeholder="Enter Participant Email">
+        </div>
+      </form>
+
+      <div id="participant-submit-section" style="display:none; margin-top: 10px;">
+        <button id="participantSubmitButton" type="submit">Submit</button>
+      </div>
+    
+       <ul id="participantList"></ul>
+
+    </div>
+
+    <!-- Attachment management form -->
+    <div id="attachmentsForm" style="display:none">
+      <h2>Manage Attachments</h2>
+      <form id="attachment">
+        <label for="attachment-option">Select an option:</label>
+        <select id="attachment-option" name="attachment" onchange="handleAttachmentOptionChange()">
+          <option value="0">Select...</option>
+          <option value="1">Create Attachments</option>
+          <option value="2">Query All Attachments</option>
+          <option value="3">Query Attachment by ID</option>
+          <option value="4">Update Attachment</option>
+          <option value="5">Delete Attachment</option>
+        </select>
+
+        <!-- This section will appear dynamically when the user selects an option -->
+        <div id="attachment-id-section" style="display:none; margin-top: 10px;">
+          <label for="attachment-id">Enter Attachment ID:</label>
+          <input type="text" id="attachment-id" name="attachment-id" placeholder="Enter Attachment ID">
+        </div>
+
+        <div id="meeting-id-section-attachment" style="display:none; margin-top: 10px;">
+          <label for="meeting-id">Enter Meeting ID:</label>
+          <input type="text" id="meeting-id-attachment" name="meeting-id" placeholder="Enter Meeting ID">
+        </div>
+
+        <div id="attachment-url-section" style="display:none; margin-top: 10px;">
+          <label for="attachment-url">Enter Attachment URL:</label>
+          <input type="text" id="attachment-url" name="attachment-url" placeholder="Enter Attachment URL">
+        </div>
+      </form>
+
+      <div id="attachment-submit-section" style="display:none; margin-top: 10px;">
+        <button id="attachmentSubmitButton" type="submit">Submit</button>
+      </div>
+    
+      <ul id="attachmentList"></ul>
+
+    </div>
+  
+    <p id="response"></p>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
