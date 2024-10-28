@@ -59,6 +59,12 @@ def send_meeting_batch(batch_size=500):
 
 # Main execution
 if __name__ == "__main__":
+    # try:
+    #     while True:
+    #         send_meeting_batch()
+    #         time.sleep(5)
+    # except KeyboardInterrupt:
+    #     print("Producer stopped.")
     try:
         send_meeting_batch()
     except Exception as e:
