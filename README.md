@@ -147,3 +147,52 @@ Hosting the Attachments Microservice:
 `python3 attachmentsApp.py`
 
 
+
+# Setting up the Kafka broker 
+First download Docker Desktop 
+I used this tutorial https://docs.docker.com/get-started/introduction/get-docker-desktop/
+And I tested that Docker was working with this script 
+`docker run -d -p 8080:80 docker/welcome-to-docker`
+
+## removing existing docker containers and images 
+I always do this to remove anything that could be running
+```bash 
+docker-compose down
+docker system prune -f
+```
+
+## deploy kafka service with docker
+```bash 
+cd kafka-setup
+docker-compose up -d
+```
+
+verify that it's running 
+```bash 
+docker-compose ps
+docker-compose logs -f kafka
+```
+
+# run producer script 
+make sure you are using python 3.11 (not python 3.12)
+if you are using a mac you can use brew to install python 3.11
+`brew install python@3.11`
+
+```bash
+cd Producer
+
+# Create a virtual environment
+python3.11 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
+# Upgrade pip
+pip install --upgrade pip
+
+# Install dependencies
+pip install kafka-python
+
+# Run the producer
+python3.11 producer.py
+```
