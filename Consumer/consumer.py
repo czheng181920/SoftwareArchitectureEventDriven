@@ -5,6 +5,7 @@ import os
 import signal
 import sys
 import requests
+import re
 
 # Configure Logging
 logging.basicConfig(
@@ -18,7 +19,39 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 KAFKA_BROKER = os.getenv('KAFKA_BROKER', '172.20.111.81:9092')
-API_BASE_URL = 'http://172.20.53.236:5001'  # Adjust to API Gateway
+API_BASE_URL = 'http://172.20.149.153:5001'  # Adjust to API Gateway
+
+# Validation function for event data
+def validate_event_data(event):
+    """Validate the event data for errors before processing."""
+    if event.get('type') == 'meeting':
+        meeting_data = event.get('data', {})
+        if len(meeting_data.get('title', '')) > 2000:
+            logger.error("Validation failed: Meeting title exceeds 2000 characters.")
+            return False
+        if len(meeting_data.get('location', '')) > 2000:
+            logger.error("Validation failed: Meeting location exceeds 2000 characters.")
+            return False
+
+    elif event.get('type') == 'participant':
+        participant_data = event.get('data', {})
+        email = participant_data.get('email', '')
+        if '@' not in email:
+            logger.error("Validation failed: Invalid email format for participant.")
+            return False
+        if len(participant_data.get('name', '')) > 600:
+            logger.error("Validation failed: Participant name exceeds 600 characters.")
+            return False
+
+    elif event.get('type') == 'attachment':
+        attachment_data = event.get('data', {})
+        url = attachment_data.get('url', '')
+        if not re.match(r'^(http|https)://', url):
+            logger.error("Validation failed: Invalid URL format for attachment.")
+            return False
+
+    # If all checks pass, return True
+    return True
 
 def process_meeting_event(event_data):
     """Process meeting events based on the event type."""
@@ -41,7 +74,6 @@ def process_meeting_event(event_data):
         logger.error(f"Error processing meeting event: {e}")
         return False
 
-
 def process_attachment_event(event_data):
     """Process attachment events based on the event type."""
     try:
@@ -60,7 +92,6 @@ def process_attachment_event(event_data):
     except Exception as e:
         logger.error(f"Error processing attachment event: {e}")
         return False
-
 
 def process_participant_event(event_data):
     """Process participant events based on the event type."""
@@ -105,8 +136,13 @@ signal.signal(signal.SIGTERM, shutdown)
 
 try:
     for message in consumer:
-        logger.info("Received meeting event")
         event = message.value
+
+        # Validate event data
+        if not validate_event_data(event):
+            logger.error("Event validation failed. Skipping processing.")
+            continue
+
         if event.get('type') == 'meeting':
             logger.info(f"Received meeting event: {event}")
             success = process_meeting_event(event)
@@ -134,6 +170,3 @@ except Exception as e:
 finally:
     consumer.close()
     logger.info("Consumer closed.")
-
-
-
