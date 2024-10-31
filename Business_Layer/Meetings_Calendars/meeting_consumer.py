@@ -25,11 +25,8 @@ API_BASE_URL = 'http://localhost:5001'  # Adjust this to your Flask app's URL
 def process_meeting_event(event_data):
     """Process meeting events based on the event type."""
     try:
-        event_type = event_data.get('action')
         meeting_data = event_data.get('data', {})
-        
-        if event_type == 'CREATE':
-            response = requests.post(
+        response = requests.post(
                 f"{API_BASE_URL}/meeting",
                 json={
                     'meeting_id': meeting_data.get('meeting_id'),
@@ -39,10 +36,8 @@ def process_meeting_event(event_data):
                     'details': meeting_data.get('details')
                 }
             )
-            logger.info(f"Created meeting: {response.json()}")
-        else:
-            logger.warning(f"Unknown event type: {event_type}")
-            
+        
+        logger.info(f"Created meeting: {response.json()}")
         return True
 
     except Exception as e:
